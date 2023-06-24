@@ -1,46 +1,60 @@
 
 import json
 
-phone_book = {}
-path: str = 'phones.json'
+class Phonebook:
 
-def open_file():
-    global phone_book
-    try:
-        with open(path, 'r', encoding='UTF-8') as file:
-            phone_book = json.load(file)
-        return True
-    except:
-        return False
+    def __init__(self, path: str = 'phones.json'):
+        self.contact: dict = {}
+        self.not_changed = {}
+        self.path = path
+    
+    def get(self, index: int | None = None):
+        if index:
+            return self.contact.get(index)
+        return self.contact
 
-def save_file():
-    try:
-        with open(path, 'w', encoding='UTF-8') as file:
-            json.dump(phone_book, file, ensure_ascii=False)
-        return True
-    except:
-        return False
+    def open_file(self):
+        try:
+            with open(self.path, 'r', encoding='UTF-8') as file:
+                self.contact = json.load(file)
+                self.not_changed = self.contact.copy()
+            return True
+        except:
+            return False
 
-def search(word: str) -> dict[int: dict[str, str]]:
-    result = {}
-    for index, contact in phone_book.items():
-        if word.lower() in ' '.join(contact.values()).lower():
-            result[index] = contact
-    return result
+    def save_file(self):
+        try:
+            with open(self.path, 'w', encoding='UTF-8') as file:
+                json.dump(self.contact, file, ensure_ascii=False, indent=4)
+            return True
+        except:
+            return False
 
-def check_id():
-    if phone_book:
-        return max(list(map(int, phone_book))) + 1
-    return 1
+    def search(self, word: str) -> dict[int:dict[str, str]]:
+        result = {}
+        for index, contact in self.contact.items():
+            if word.lower() in ' '.join(contact.values()).lower():
+                result[index] = contact
+        return result
 
-def add_contact(new: dict[int: dict[str, str]]):
-    contact = {check_id(): new}
-    phone_book.update(contact)
+    def check_id(self):
+        if self.contact:
+            return max(list(map(int, self.contact))) + 1
+        return 1
 
-def change_contact(i: int, cnt: dict[int: dict[str, str]]):
-    contact = {i: cnt}
-    phone_book.update(contact)
+    def add_contact(self, new: dict[str, str]):
+        contact = {self.check_id(): new}
+        self.contact.update(contact)
 
-def delete_contact(i: int) -> dict[int: dict[str, str]]:
-    deleted = phone_book.pop(i)
-    return deleted
+    def change_contact(self, i: int, cnt: dict[str, str]):
+        contact = {i: cnt}
+        self.contact.update(contact)
+
+    def delete_contact(self, i: int):
+        deleted = self.contact.pop(i)
+        return deleted
+    
+    def check_on_exit(self):
+        if self.contact == self.not_changed:
+            return False
+        else: return True

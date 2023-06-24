@@ -1,6 +1,6 @@
 import text as t
 
-def menu():
+def menu() -> int:
     print(t.main_menu[0])
     for i in range(1, len(t.main_menu)):
         print(f'\t{i}. {t.main_menu[i]}')

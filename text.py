@@ -39,4 +39,6 @@ def upd_successful(name: str) -> str:
 def del_successful(name: str) -> str:
     return f'Контакт {name} успешно удалён!'
 
+change_confirm = 'У вас есть несохраненные изменения. Сохранить перед выходом? (y/n): '
+
 goodbye = 'До свидания!'
